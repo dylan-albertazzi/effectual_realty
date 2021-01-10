@@ -1,38 +1,38 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap");
+
+html,
+h1,
+h2,
+h3,
+h4,
+h5,
+a,
+span,
+li,
+ul {
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  color: #2d4059;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+div.navbar-collapse a:hover {
+  text-decoration: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button.custom-toggler {
+  border: none;
+}
+button.custom-toggler .navbar-toggler-icon {
+  background-image: url("images/toggler-icon.svg");
+  width: 45px;
+  height: 45px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.navbar ul {
+  color: #fff;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* nav a.navbar-brand.text-main {
+  background: linear-gradient(90.14deg, #e55d87 -1.13%, #5fc3e4 58.56%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+} */

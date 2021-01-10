@@ -1,0 +1,19 @@
+type Home @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  MLS: ID!
+  Street1: String!
+  Street2: String
+  City: String!
+  State: String!
+  ZipCode: Int!
+  Neighborhood: String
+  SalesPrice: Float!
+  DateListed: AWSDate!
+  Bedrooms: Int!
+  Photos: [AWSURL]
+  Bathrooms: Int!
+  GarageSize: Int!
+  SquareFeet: Int!
+  LotSize: Int
+  Description: String
+}
