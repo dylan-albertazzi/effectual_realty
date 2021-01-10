@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
-import Amplify, { API } from "aws-amplify";
 import { Form, Field } from "@leveluptuts/fresh";
-
 import { Container, Row, Col, Jumbotron, Button, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup,Label,Input } from "reactstrap";
-import { Link } from "react-router-dom";
 import AppNavbar from "./AppNavbar";
 
 import { DataStore } from '@aws-amplify/datastore';
 import { Home } from '../models';
 
 export default function ManageListingPage() {
-  
-    const [listing, setListing] = useState([]);
     
+    //state variables used
+    const [listing, setListing] = useState([]);
+    const [addListingModal, setaddListingModal] = useState(false);
+    const [editListingModal, seteditListingModal] = useState(false);
+    const [previousValues, setPreviousValues] = useState({})
+  
+    
+    //updates listings on page when loaded
     useEffect(() => {
         const func = async () => {
             const listings = await DataStore.query(Home)
@@ -26,21 +29,70 @@ export default function ManageListingPage() {
         func()
     }, [])
 
-    const [addListingModal, setaddListingModal] = useState(false);
-
+  
+    //function that opens and closes the add listing modal
     const toggle = () => setaddListingModal(!addListingModal);
+    
+    //function that opens the edit listing modal and populates with data from entry
+    const toggleEditListing = async (original) => {
+   
+       
+        //set values to be populated in edit form
+        const func = async (original) => {
+            // const listings = await DataStore.query(Home)
+            console.log("before listings")
+            console.log(original)
+            console.log("after listings")
+            setPreviousValues( {
+                "MLS": "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
+                "id": original.id,
+                "street1": original.street1,
+                "street2": original.street2,
+                "city": original.city,
+                "state": original.state,
+                "zipCode": original.zipCode,
+                "neighborhood": original.neighborhood,
+                "salesPrice": original.salesPrice,
+                "dateListed": original.dateListed,
+                "bedrooms": original.bedrooms,
+                "photos": original.photos,
+                "bathrooms": original.bathrooms,
+                "garageSize": (typeof(original.garageSize) === 'string' ? null : original.garageSize),
+                "squareFeet": original.squareFeet,
+                "lotSize": (typeof(original.lotSize) === 'string' ? null : original.lotSize),
+                "description": original.description
+            })
+        }
+        func(original)
+        
+        //toggle the edit modal
+        seteditListingModal(!editListingModal)
+        
+    }
+
+    //function that closes the edit listing modal
+    const toggleEditListingOff = () => seteditListingModal(!editListingModal);
+
+    const deleteListing = async (id) => {
+        //delete item with given id in datastore
+        const modelToDelete = await DataStore.query(Home, id);
+        DataStore.delete(modelToDelete);
+
+        //update results on page
+        const func = async () => {
+            const listings = await DataStore.query(Home)
+            console.log("before listings")
+            console.log(listings)
+            console.log("after listings")
+            setListing(listings)
+        }
+
+        func()
+    }
+    
 
     const createListing = async (data) => {
-        // const listing = {
-        //     title
-        // }
-        console.log("Creating Listing")
-        
-        console.log("Create Listing data", data)
-        console.log("Street1", data.street1)
-        console.log("zipCode", data.zipCode)
-        console.log("typeof", typeof(data.zipCode))
-
+        //make a new listing and save to data store
         const newListing = await DataStore.save(
             new Home({
                 "MLS": "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
@@ -55,31 +107,81 @@ export default function ManageListingPage() {
                 "Bedrooms": data.bedrooms,
                 "Photos": data.photos,
                 "Bathrooms": data.bathrooms,
-                "GarageSize": data.garageSize,
+                "GarageSize": (typeof(data.garageSize) === 'string' ? null : data.garageSize),
                 "SquareFeet": data.squareFeet,
-                "LotSize": data.lotSize,
+                "LotSize": (typeof(data.lotSize) === 'string' ? null : data.lotSize),
                 "Description": data.description
             })
         
         );
-        console.log("After saveListing", newListing)
+        
+        //close the create listing modal
         toggle()
+
+        //update results on page
+        const func = async () => {
+            const listings = await DataStore.query(Home)
+            console.log("before listings")
+            console.log(listings)
+            console.log("after listings")
+            setListing(listings)
+        }
+        
+        func()
     }
-    const securityQuestions = [
-        "What is your mother's maiden name?",
-        "What was the name of your first pet?",
-        "What was the name of your first school?"
-      ];
-      
+
+    //fired when add listing form is submitted
     const onSubmit = (data) => {
         console.log("==data",data);
         createListing(data)
     }
 
-    const previousValues = {
-        name: 'Brooklyn Boo',
-        email: 'scott@test.com',
-      }
+    const editListing = async (newVals) => {
+      
+        const original = await DataStore.query(Home, newVals.id);
+        console.log("==original edit listing:", original)
+        await DataStore.save(Home.copyOf(original, item => {
+            // Update the values on {item} variable to update DataStore entry
+            item.Street1 = newVals.street1
+            item.Street2 = newVals.street2
+            item.City = newVals.city
+            item.State = newVals.state
+            item.ZipCode = newVals.zipCode
+            item.Neighborhood = newVals.neighborhood
+            item.SalesPrice = newVals.salesPrice
+            item.DateListed = newVals.dateListed
+            item.Bedrooms = newVals.bedrooms
+            item.Photos = newVals.photos
+            item.Bathrooms = newVals.bathrooms
+            item.GarageSize = (typeof(newVals.garageSize) === 'string' ? null : newVals.garageSize)
+            item.SquareFeet = newVals.squareFeet
+            item.LotSize = (typeof(newVals.lotSize) === 'string' ? null : newVals.lotSize)
+            item.Description = newVals.description
+        }));
+
+        //Close edit listing modal
+        toggleEditListingOff()
+        //Update Results on page
+        const func = async () => {
+            const listings = await DataStore.query(Home)
+            console.log("before listings")
+            console.log(listings)
+            console.log("after listings")
+            setListing(listings)
+        }
+        
+        func()
+    }
+ 
+    
+    
+
+    //fired when edit listing form is submitted
+    const onSubmitEditListing = (data) => {
+        console.log("==data",data);
+        editListing(data)
+    }
+
  
 
   return (
@@ -145,7 +247,7 @@ export default function ManageListingPage() {
                                 
                                 </CardTitle>
                                       <CardSubtitle className="text-center">{listing.Street1} 
-                                          {listing.hasOwnProperty("Street2") ? (listing.Street2) : null}</CardSubtitle>
+                                          {listing.hasOwnProperty("Street2") ? (listing.Street2) : null} {' '}{listing.City} {' '}{listing.State} {' '} {listing.ZipCode}</CardSubtitle>
                                       <CardSubtitle className="text-center">Date Listed: {listing.DateListed} GarageSize: {listing.GarageSize} sq.ft</CardSubtitle>
                                       <CardSubtitle className="text-center">Lot Size: {listing.hasOwnProperty("LotSize") ? ( listing.LotSize ) : null} sq.ft Neighborhood: {listing.hasOwnProperty("Neighborhood") ? (listing.Neighborhood ) : null}</CardSubtitle>
                                       <CardText>
@@ -153,9 +255,15 @@ export default function ManageListingPage() {
                                           {listing.hasOwnProperty("Description") ? (listing.Description) : null}
                                       </CardText>
                                       <CardSubtitle className="text-center">
-                                            {listing.MLS}
+                                            <p>MLS:  {listing.id}</p> 
                                       </CardSubtitle >
-                                      <Button className="text-center"> Edit Listing </Button>
+                                     
+                                      <Button onClick={()=>toggleEditListing({id: listing.id, salesPrice: listing.SalesPrice, 
+                                        bedrooms: listing.Bedrooms, bathrooms: listing.Bathrooms, squareFeet: listing.SquareFeet, 
+                                        street1: listing.Street1, street2: listing.Street2, dateListed: listing.DateListed, 
+                                        garageSize: listing.GarageSize, lotSize: listing.LotSize, neighborhood: listing.Neighborhood, 
+                                        description: listing.Description, city: listing.City, state: listing.State, zipCode: listing.ZipCode})} className="text-center"> Edit Listing </Button>
+                                      <Button onClick={()=>deleteListing(listing.id)} className="text-center"> Delete Listing </Button>
                                       
                             </CardBody>
                             </Card>
@@ -166,11 +274,43 @@ export default function ManageListingPage() {
                   </Row>
               </Container>
           </div>
+          {/* <Form formId="defaults" onSubmit={onSubmit} defaultValues={defaultValues}>
+      <Field>Name</Field>
+      <Field type="email">Email</Field>
+      <Field>Two Words</Field>
+    </Form> */}
           
         <Modal isOpen={addListingModal} toggle={toggle}>
             <ModalHeader toggle={toggle}>Enter Details For Your Listing Here</ModalHeader>
             <ModalBody>
-            <Form formId="user-profile" onSubmit={onSubmit}>
+            <Form formId="user-profile" cancelAction={toggle} onSubmit={onSubmit}>
+                <Field placeholder="64576 Sylvan Loop" name="street1" required>Street1</Field>
+                <Field placeholder="Apt. 42" >Street2</Field>
+                <Field placeholder="Bend" required>City</Field>
+                <Field placeholder="OR" required>State</Field>
+                <Field placeholder="97701" type="number" required>Zip Code</Field>
+                <Field placeholder="NW Crossing">Neighborhood</Field>
+                <Field placeholder="351000" type="number" required>Sales Price</Field>
+                <Field placeholder="3" type="number" required>Bedrooms</Field>
+                <Field placeholder="4" type="number" required>Bathrooms</Field>
+                {/* <Field type="file" >Photos</Field> */}
+                <Field placeholder="mm/dd/yyyy" type="date" required>Date Listed</Field>
+                <Field placeholder="300" type="number" name="garageSize" required>Garage Size (sq.ft)</Field>
+                <Field placeholder="2450" type="number" name="squareFeet" required>Square Feet (sq.ft)</Field>
+                <Field placeholder="10000" type="number" name="lotSize" required>Lot Size (sq.ft)</Field>
+                <Field placeholder="A lovely Bend house." required>Description</Field>
+            </Form>
+                        
+            </ModalBody>
+            <ModalFooter>
+                
+            </ModalFooter>
+        </Modal>
+       
+        <Modal isOpen={editListingModal}  toggle={toggleEditListing}>
+            <ModalHeader toggle={toggleEditListing}>Edit Your Listing Here</ModalHeader>
+            <ModalBody>
+            <Form formId="defaults" cancelAction={toggleEditListingOff} defaultValues={previousValues} onSubmit={onSubmitEditListing}>
                 <Field placeholder="64576 Sylvan Loop" required>Street1</Field>
                 <Field placeholder="Apt. 42" >Street2</Field>
                 <Field placeholder="Bend" required>City</Field>
@@ -182,9 +322,9 @@ export default function ManageListingPage() {
                 <Field placeholder="4" type="number" required>Bathrooms</Field>
                 {/* <Field type="file" >Photos</Field> */}
                 <Field placeholder="mm/dd/yyyy" type="date" required>Date Listed</Field>
-                <Field placeholder="300" type="number" name="garageSize" >Garage Size (sq.ft)</Field>
+                <Field placeholder="300" type="number" name="garageSize" required>Garage Size (sq.ft)</Field>
                 <Field placeholder="2450" type="number" name="squareFeet" required>Square Feet (sq.ft)</Field>
-                <Field placeholder="10000" type="number" name="lotSize" >Lot Size (sq.ft)</Field>
+                <Field placeholder="10000" type="number" name="lotSize" required>Lot Size (sq.ft)</Field>
                 <Field placeholder="A lovely Bend house." required>Description</Field>
             </Form>
                         
@@ -193,7 +333,6 @@ export default function ManageListingPage() {
                 
             </ModalFooter>
         </Modal>
-       
     </>
   );
 }
