@@ -1,3 +1,6 @@
+# Effectual Realty
+Basic CRUD app made with AWS Amplify and React
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
