@@ -15,9 +15,9 @@ function App() {
         <div>
           <Switch>
           <Route path="/" exact component={HomePage} />
-         
+          <AmplifyAuthenticator>
             <Route path="/manage-listing" exact component={ManageListingPage} />
-         
+            </AmplifyAuthenticator>
            
           </Switch>
         </div>

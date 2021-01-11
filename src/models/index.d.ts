@@ -11,7 +11,7 @@ export declare class Home {
   readonly Street2?: string;
   readonly City: string;
   readonly State: string;
-  readonly ZipCode: number;
+  readonly ZipCode: string;
   readonly Neighborhood?: string;
   readonly SalesPrice: number;
   readonly DateListed: string;

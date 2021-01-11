@@ -48,7 +48,7 @@ export const schema = {
                 "ZipCode": {
                     "name": "ZipCode",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -152,5 +152,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "839ca12a2b5320a59c150658beefdec2"
+    "version": "3649c038258d1572b873e0b66c8fbdbc"
 };

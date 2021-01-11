@@ -6,6 +6,7 @@ import AppNavbar from "./AppNavbar";
 import { DataStore } from '@aws-amplify/datastore';
 import { Home } from '../models';
 
+import placeholder from '../images/house-placeholder.jpg'; 
 export default function ManageListingPage() {
     
     //state variables used
@@ -172,9 +173,6 @@ export default function ManageListingPage() {
         
         func()
     }
- 
-    
-    
 
     //fired when edit listing form is submitted
     const onSubmitEditListing = (data) => {
@@ -189,9 +187,9 @@ export default function ManageListingPage() {
       <div className="bg-gray">
         <div className="jumbotron-home">
           <div className="home-intro-bg"></div>
-          <Container className="home-intro" fluid>
+          <Container className="home-intro px-0" fluid>
             <AppNavbar initialOpen={false} />
-            <Jumbotron className="bg-transparent mb-0 pt-2 pb-0">
+            <Jumbotron className="bg-transparent mb-0 pt-2 pb-0 text-center mt-4">
 
               <h1 className="jumbotron-txt">
                 Manage Listings Here!
@@ -202,19 +200,19 @@ export default function ManageListingPage() {
           </Container>
               </div>
               <Container>
-                  <Row>
-                      <Col>
-                          <Button onClick={toggle}>
+                  <Row className="my-4">
+                      <Col className="d-flex justify-content-center">
+                          <Button className="bg-success" onClick={toggle}>
                               Add Listing
                         </Button>
                       </Col>
                   </Row>
               </Container>
                  <Container>
-                  <Row>
-                      <Col>
-                          {listing.map(listing => 
-                            
+                  <Row className="justify-content-around">
+                      
+                          {listing.slice(0).reverse().map(listing => 
+                             <Col xs="5" className="m-2 my-4">
                             
                                   
                               <Card className="shadow">
@@ -222,7 +220,7 @@ export default function ManageListingPage() {
                                 <CardImg
                                 top
                                 width="100%"
-                                // src={}
+                                src={placeholder}
                                 alt="Photo not added yet"
                                 className="response-img"
                                 />
@@ -238,39 +236,40 @@ export default function ManageListingPage() {
                             )}
 
                             <CardBody>
-                                <CardTitle className="text-center mb-1">
+                                <CardTitle className="text-center mb-1 d-flex justify-content-between card-top-line">
                                 
                                     <h2 className="font-weight-bold mb-0">
                                     $ {listing.SalesPrice}
                                           </h2>
-                                          <h3>{listing.Bedrooms} bed | {listing.Bathrooms} ba | {listing.SquareFeet} sq.ft</h3>
+                                          <h2>{listing.Bedrooms} bed | {listing.Bathrooms} ba | {listing.SquareFeet} sq.ft</h2>
                                 
                                 </CardTitle>
-                                      <CardSubtitle className="text-center">{listing.Street1} 
+                                      <CardSubtitle className="card-txt my-3 d-flex justify-content-between">{listing.Street1} 
                                           {listing.hasOwnProperty("Street2") ? (listing.Street2) : null} {' '}{listing.City} {' '}{listing.State} {' '} {listing.ZipCode}</CardSubtitle>
-                                      <CardSubtitle className="text-center">Date Listed: {listing.DateListed} GarageSize: {listing.GarageSize} sq.ft</CardSubtitle>
-                                      <CardSubtitle className="text-center">Lot Size: {listing.hasOwnProperty("LotSize") ? ( listing.LotSize ) : null} sq.ft Neighborhood: {listing.hasOwnProperty("Neighborhood") ? (listing.Neighborhood ) : null}</CardSubtitle>
+                                      <CardSubtitle className="card-text my-3"><span>Date Listed: {listing.DateListed} </span><span>GarageSize: {listing.GarageSize} sq.ft</span></CardSubtitle>
+                                      <CardSubtitle className="card-text my-3"><span>Lot Size: {listing.hasOwnProperty("LotSize") ? ( listing.LotSize ) : null} sq.ft </span><span>Neighborhood: {listing.hasOwnProperty("Neighborhood") ? (listing.Neighborhood ) : null}</span></CardSubtitle>
                                       <CardText>
-                                          Description: <br/>
+                                          <strong>Description: </strong><br/>
                                           {listing.hasOwnProperty("Description") ? (listing.Description) : null}
                                       </CardText>
-                                      <CardSubtitle className="text-center">
-                                            <p>MLS:  {listing.id}</p> 
+                                      <CardSubtitle className="card-text my-3">
+                                      <span>MLS:  {listing.id}</span>
                                       </CardSubtitle >
-                                     
-                                      <Button onClick={()=>toggleEditListing({id: listing.id, salesPrice: listing.SalesPrice, 
+                                     <div className="d-flex justify-content-around">
+                                      <Button className="bg-warning" onClick={()=>toggleEditListing({id: listing.id, salesPrice: listing.SalesPrice, 
                                         bedrooms: listing.Bedrooms, bathrooms: listing.Bathrooms, squareFeet: listing.SquareFeet, 
                                         street1: listing.Street1, street2: listing.Street2, dateListed: listing.DateListed, 
                                         garageSize: listing.GarageSize, lotSize: listing.LotSize, neighborhood: listing.Neighborhood, 
                                         description: listing.Description, city: listing.City, state: listing.State, zipCode: listing.ZipCode})} className="text-center"> Edit Listing </Button>
-                                      <Button onClick={()=>deleteListing(listing.id)} className="text-center"> Delete Listing </Button>
-                                      
+                                      <Button onClick={()=>deleteListing(listing.id)} className="text-center bg-danger"> Delete Listing </Button>
+                                      </div>
                             </CardBody>
                             </Card>
+                            </Col>
                           )}
                           
 
-                      </Col>
+                      
                   </Row>
               </Container>
           </div>
@@ -288,7 +287,7 @@ export default function ManageListingPage() {
                 <Field placeholder="Apt. 42" >Street2</Field>
                 <Field placeholder="Bend" required>City</Field>
                 <Field placeholder="OR" required>State</Field>
-                <Field placeholder="97701" type="number" required>Zip Code</Field>
+                <Field placeholder="97701" required>Zip Code</Field>
                 <Field placeholder="NW Crossing">Neighborhood</Field>
                 <Field placeholder="351000" type="number" required>Sales Price</Field>
                 <Field placeholder="3" type="number" required>Bedrooms</Field>
@@ -315,7 +314,7 @@ export default function ManageListingPage() {
                 <Field placeholder="Apt. 42" >Street2</Field>
                 <Field placeholder="Bend" required>City</Field>
                 <Field placeholder="OR" required>State</Field>
-                <Field placeholder="97701" type="number" required>Zip Code</Field>
+                <Field placeholder="97701" required>Zip Code</Field>
                 <Field placeholder="NW Crossing">Neighborhood</Field>
                 <Field placeholder="351000" type="number" required>Sales Price</Field>
                 <Field placeholder="3" type="number" required>Bedrooms</Field>

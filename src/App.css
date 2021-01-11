@@ -10,9 +10,9 @@ a,
 span,
 li,
 ul {
-  font-family: "Inter", sans-serif;
+  font-family: "Open Sans", sans-serif;
   font-weight: 800;
-  color: #2d4059;
+  color: #000;
 }
 
 div.navbar-collapse a:hover {
@@ -36,3 +36,21 @@ button.custom-toggler .navbar-toggler-icon {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 } */
+
+.card-top-line h2 {
+  font-size:medium;
+}
+
+div.card-txt {
+  font-size: medium;
+  font-weight: 600;
+}
+
+.filter-section {
+  color: aqua;
+}
+
+.signout {
+  max-width: 10vw;
+  padding-top: 2vh;
+}

@@ -5,7 +5,7 @@ type Home @model @auth(rules: [{allow: public}]) {
   Street2: String
   City: String!
   State: String!
-  ZipCode: Int!
+  ZipCode: String!
   Neighborhood: String
   SalesPrice: Float!
   DateListed: AWSDate!
@@ -17,3 +17,4 @@ type Home @model @auth(rules: [{allow: public}]) {
   LotSize: Int
   Description: String
 }
+ 
